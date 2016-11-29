@@ -1,39 +1,52 @@
 <html>
 	<head>
 		<script type="text/javascript" src="javascript/fabric.min.js"></script>
-		<style>
-			.button {
-			    background-color: #4CAF50;
-			    border: none;
-			    color: white;
-			    padding: 15px 32px;
-			    text-align: center;
-			    text-decoration: none;
-			    display: inline-block;
-			    font-size: 16px;
-			    margin: 4px 2px;
-			    cursor: pointer;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
 	</head>
 
 	<body>
-		<label>上傳你的圖片： </label>
-		<input class="button" type="file" id="imageLoader" name="imageLoader"/>
+		<div style="height=150px; width=100%;">
+			<label>上傳你的圖片： </label>
+			<input type="file" id="imageLoader" name="imageLoader"/>
+		</div>
 		<br/>
 		<canvas id="canvas" width="960" height="960"></canvas><br/>
 
-		<button id="download" class="button" type="button">完成並下載！</button><br/>
+		<a id="lnkDownload" class="gdbut" href="#">完成並下載！</a>
 		
 		<script>
 			var canvas = new fabric.Canvas('canvas');
 			canvas.setBackgroundImage('image/canvas/background.png', canvas.renderAll.bind(canvas), {
-			  // Needed to position backgroundImage at 0/0
 			  originX: 'left',
-			  originY: 'top'
+			  originY: 'top',
+		    left: 0,
+		    top: 0,
+		    // crossOrigin: 'anonymous'
 			});
 
-			fabric.Image.fromURL('http://manga-gatari.s3.amazonaws.com/uploads/topic/743/show_image.jpeg', function(img) {
+			// var imageLoader = document.getElementById('imageLoader');
+			// imageLoader.addEventListener('change', handleImage, false);
+			// function handleImage(e) {
+			//     var objects = canvas.getObjects();
+			//     for (var i in objects) {
+			//        objects[i].remove();
+			//     }
+			//     var reader = new FileReader();
+			//     reader.onload = function (event) {
+			//         var img = new Image();
+			//         img.onload = function () {
+			//             var imgInstance = new fabric.Image(img, {
+			//                selectable: 1
+			//             })
+			//             canvas.add(imgInstance);
+			//             canvas.deactivateAll().renderAll();
+			//         }
+			//         img.src = event.target.result;
+			//     }
+			//     reader.readAsDataURL(e.target.files[0]);
+			// }
+
+			fabric.Image.fromURL('image/canvas/show_image.jpeg', function(img) {
 		    img.set( { left: 100, top: 100 } );
 		    canvas.add(img);
 
@@ -54,14 +67,15 @@
 				}
 
 		  });
-			canvas.renderAll();
-			function download () {
-				canvas.deactivateAll().renderAll();  
-				var dt = canvas.toDataURL('png');
-				this.href = dt;
+
+			var imageSaver = document.getElementById('lnkDownload');
+			imageSaver.addEventListener('click', saveImage, false);
+
+			function saveImage(e) {
+			    this.href = canvas.toDataURL('png');
+			    this.download = 'canvas.png';
 			}
-			var dlbutton = document.getElementById('download');
-			dlbutton.addEventListener('click', download, false);
+
 		</script>
 	</body>
 
