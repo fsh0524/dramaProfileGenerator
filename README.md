@@ -1,2 +1,4 @@
-# dramaProfileGenerator
-## NCTUCS 09 Drama - Profile Photo Generator
+# NCTUCS 09 Drama
+## Feature
+- index.html
+- Profile Photo Generator
