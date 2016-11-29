@@ -1,23 +1,35 @@
 <html>
 	<head>
 		<script type="text/javascript" src="javascript/fabric.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="stylesheet" type="text/css" href="css/style.css" media="none" onload="this.media='all';">
+		<link rel="stylesheet" type="text/css" href="css/font.css" media="none" onload="this.media='all';">
 	</head>
 
 	<body>
-		<div style="height=240px; width=100%;">
-			<label>上傳你的圖片： </label>
-			<input type="file" id="imageLoader" name="imageLoader"/>
-
-			<label>LOGO 小字顏色：</label>
-			<label class="switch">
-			  <input id="logo_switch" type="checkbox">
-			  <div class="slider round"></div>
-			</label>
-			<label>調整標語顏色：</label>
-			<input type="color" id="color"/>
+		<!-- 黑魔法 -->
+		<div style="font-family:'BMin00h';height:30px;width:960px;font-size:24px;margin-top:30px;">
+			<div style="width:170px;float:left;">
+				<label>上傳你的圖片： </label>
+			</div>
+			<div style="width:200px;float:left;">
+				<input type="file" id="imageLoader" name="imageLoader">
+			</div>
+			<div style="width=200px; float:left;">
+				<label>LOGO小字顏色：</label>
+			</div>
+			<div style="width=80px;float:left;margin-top:-5px;">
+				<label class="switch" style="transform: scale(0.75, 0.75);">
+				  <input id="logo_switch" type="checkbox">
+				  <div class="slider round"></div>
+				</label>
+			</div>
+			<div style="width=160px; float:left; margin-left:150px">
+				<label>調整標語顏色：</label>
+			</div>
+			<div style="width=100px; float:right;">
+				<input type="color" id="color">
+			</div>
 		</div>
-		<br/>
 
 		<canvas id="canvas" width="960" height="960"></canvas><br/>
 
@@ -33,7 +45,7 @@
 			});
 
 			fabric.Image.fromURL('image/canvas/show_image.jpeg', function(img) {
-		    img.set( { left: 0, top: 0 } );
+		    img.set( { left: 500, top: 300 } );
 		    canvas.add(img);
 
 		    var imageLoader = document.getElementById('imageLoader');
@@ -46,7 +58,6 @@
 		            img.width = this.width;
 		            img.height = this.height;
 		            img.setSrc(this.src);
-		            canvas.renderAll();
 			        }
 			        nimg.src = event.target.result;
 			    }
@@ -56,7 +67,7 @@
 		  });
 
 		  fabric.Image.fromURL('image/canvas/title_left.png', function(img) {
-		    img.set( { left: 300, top: 300 } );
+		    img.set( { left: 20, top: 300 } );
 		    canvas.add(img);
 		    var logo_side = 'left';
 		    var logo_switch = document.getElementById('logo_switch');
@@ -73,20 +84,55 @@
 		    	} else {
 		    		console.error('Change logo error.');
 		    	}
-		    	canvas.renderAll();
 		    }
 		  });
-
 		  var slogan = new fabric.IText("12月10日   你是我的小心肝嗎？  ", {
 		  	left: 50,
 		  	top: 30,
+		  	fontFamily: 'BMin00h',
 		  	fill: '#fff',
-			  fontFamily: '文鼎特明',
 			  shadow: 'rgba(0,0,0,0.3) 5px 5px 5px',
 			  fontSize: 60,
+			  styles: {
+			  	0: {
+			  		13: { fill: '#e16ee9' },
+			  		14: { fill: '#e16ee9' },
+			  		15: { fill: '#e16ee9' }
+			  	}
+			  }
 			});
 			canvas.add(slogan);
-			canvas.renderAll();
+
+			function addHandler(id, fn, eventName) {
+			  document.getElementById(id)[eventName] = function() {
+			    var el = this;
+			    if (obj = canvas.getActiveObject()) {
+			      fn.call(el, obj);
+			      canvas.renderAll();
+			    }
+			  };
+			}
+
+			function setStyle(object, styleName, value) {
+			  if (object.setSelectionStyles && object.isEditing) {
+			    var style = { };
+			    style[styleName] = value;
+			    object.setSelectionStyles(style);
+			  }
+			  else {
+			    object[styleName] = value;
+			  }
+			}
+
+			function getStyle(object, styleName) {
+			  return (object.getSelectionStyles && object.isEditing)
+			    ? object.getSelectionStyles()[styleName]
+			    : object[styleName];
+			}
+
+			addHandler('color', function(obj) {
+				setStyle(obj, 'fill', document.getElementById('color').value);
+			}, 'onchange');
 
 			var imageSaver = document.getElementById('lnkDownload');
 			imageSaver.addEventListener('click', saveImage, false);
@@ -95,7 +141,6 @@
 			    this.href = canvas.toDataURL('png');
 			    this.download = 'canvas.png';
 			}
-
 		</script>
 	</body>
 

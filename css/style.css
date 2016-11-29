@@ -70,7 +70,3 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-@font-face {
-    font-family: "文鼎特明";
-    src: url(BMin00h.ttf);
-}
