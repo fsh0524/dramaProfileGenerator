@@ -1,0 +1,68 @@
+<html>
+	<head>
+		<script type="text/javascript" src="javascript/fabric.min.js"></script>
+		<style>
+			.button {
+			    background-color: #4CAF50;
+			    border: none;
+			    color: white;
+			    padding: 15px 32px;
+			    text-align: center;
+			    text-decoration: none;
+			    display: inline-block;
+			    font-size: 16px;
+			    margin: 4px 2px;
+			    cursor: pointer;
+			}
+		</style>
+	</head>
+
+	<body>
+		<label>上傳你的圖片： </label>
+		<input class="button" type="file" id="imageLoader" name="imageLoader"/>
+		<br/>
+		<canvas id="canvas" width="960" height="960"></canvas><br/>
+
+		<button id="download" class="button" type="button">完成並下載！</button><br/>
+		
+		<script>
+			var canvas = new fabric.Canvas('canvas');
+			canvas.setBackgroundImage('image/canvas/background.png', canvas.renderAll.bind(canvas), {
+			  // Needed to position backgroundImage at 0/0
+			  originX: 'left',
+			  originY: 'top'
+			});
+
+			fabric.Image.fromURL('http://manga-gatari.s3.amazonaws.com/uploads/topic/743/show_image.jpeg', function(img) {
+		    img.set( { left: 100, top: 100 } );
+		    canvas.add(img);
+
+		    var imageLoader = document.getElementById('imageLoader');
+		    imageLoader.addEventListener('change', handleImage, false);
+		    function handleImage(e){
+			    var reader = new FileReader();
+			    reader.onload = function(event){
+			        var nimg = new Image();
+			        nimg.onload = function() {
+		            img.width = this.width;
+		            img.height = this.height;
+		            img.setSrc(this.src);
+			        }
+			        nimg.src = event.target.result;
+			    }
+			    reader.readAsDataURL(e.target.files[0]);     
+				}
+
+		  });
+			canvas.renderAll();
+			function download () {
+				canvas.deactivateAll().renderAll();  
+				var dt = canvas.toDataURL('png');
+				this.href = dt;
+			}
+			var dlbutton = document.getElementById('download');
+			dlbutton.addEventListener('click', download, false);
+		</script>
+	</body>
+
+</html>
