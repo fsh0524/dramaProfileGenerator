@@ -5,11 +5,20 @@
 	</head>
 
 	<body>
-		<div style="height=150px; width=100%;">
+		<div style="height=240px; width=100%;">
 			<label>上傳你的圖片： </label>
 			<input type="file" id="imageLoader" name="imageLoader"/>
+
+			<label>LOGO 小字顏色：</label>
+			<label class="switch">
+			  <input id="logo_switch" type="checkbox">
+			  <div class="slider round"></div>
+			</label>
+			<label>調整標語顏色：</label>
+			<input type="color" id="color"/>
 		</div>
 		<br/>
+
 		<canvas id="canvas" width="960" height="960"></canvas><br/>
 
 		<a id="lnkDownload" class="gdbut" href="#">完成並下載！</a>
@@ -20,39 +29,16 @@
 			  originX: 'left',
 			  originY: 'top',
 		    left: 0,
-		    top: 0,
-		    // crossOrigin: 'anonymous'
+		    top: 0
 			});
 
-			// var imageLoader = document.getElementById('imageLoader');
-			// imageLoader.addEventListener('change', handleImage, false);
-			// function handleImage(e) {
-			//     var objects = canvas.getObjects();
-			//     for (var i in objects) {
-			//        objects[i].remove();
-			//     }
-			//     var reader = new FileReader();
-			//     reader.onload = function (event) {
-			//         var img = new Image();
-			//         img.onload = function () {
-			//             var imgInstance = new fabric.Image(img, {
-			//                selectable: 1
-			//             })
-			//             canvas.add(imgInstance);
-			//             canvas.deactivateAll().renderAll();
-			//         }
-			//         img.src = event.target.result;
-			//     }
-			//     reader.readAsDataURL(e.target.files[0]);
-			// }
-
 			fabric.Image.fromURL('image/canvas/show_image.jpeg', function(img) {
-		    img.set( { left: 100, top: 100 } );
+		    img.set( { left: 0, top: 0 } );
 		    canvas.add(img);
 
 		    var imageLoader = document.getElementById('imageLoader');
 		    imageLoader.addEventListener('change', handleImage, false);
-		    function handleImage(e){
+		    function handleImage (e){
 			    var reader = new FileReader();
 			    reader.onload = function(event){
 			        var nimg = new Image();
@@ -60,6 +46,7 @@
 		            img.width = this.width;
 		            img.height = this.height;
 		            img.setSrc(this.src);
+		            canvas.renderAll();
 			        }
 			        nimg.src = event.target.result;
 			    }
@@ -67,6 +54,39 @@
 				}
 
 		  });
+
+		  fabric.Image.fromURL('image/canvas/title_left.png', function(img) {
+		    img.set( { left: 300, top: 300 } );
+		    canvas.add(img);
+		    var logo_side = 'left';
+		    var logo_switch = document.getElementById('logo_switch');
+		    logo_switch.addEventListener('change', handleImage, false);
+		    function handleImage (e) {
+		    	if (logo_side == 'left') {
+		    		logo_side = 'right';
+		    		img.setSrc('image/canvas/title_right.png');
+		    		console.log('Change logo to right side.');
+		    	} else if (logo_side == 'right') {
+		    		logo_side = 'left';
+		    		img.setSrc('Image/canvas/title_left.png');
+		    		console.log('Change logo to left side.');
+		    	} else {
+		    		console.error('Change logo error.');
+		    	}
+		    	canvas.renderAll();
+		    }
+		  });
+
+		  var slogan = new fabric.IText("12月10日   你是我的小心肝嗎？  ", {
+		  	left: 50,
+		  	top: 30,
+		  	fill: '#fff',
+			  fontFamily: '文鼎特明',
+			  shadow: 'rgba(0,0,0,0.3) 5px 5px 5px',
+			  fontSize: 60,
+			});
+			canvas.add(slogan);
+			canvas.renderAll();
 
 			var imageSaver = document.getElementById('lnkDownload');
 			imageSaver.addEventListener('click', saveImage, false);
