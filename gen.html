@@ -7,7 +7,8 @@
 
 	<body>
 		<!-- 黑魔法 -->
-		<div style="font-family:'BMin00h';height:30px;width:960px;font-size:24px;margin-top:30px;">
+		<div id = "crt" style="font-family:'BMin00h'">&nbsp;</div>
+		<div style="height:30px;width:960px;font-size:24px;margin-top:30px;">
 			<div style="width:170px;float:left;">
 				<label>上傳你的圖片： </label>
 			</div>
@@ -23,7 +24,7 @@
 				  <div class="slider round"></div>
 				</label>
 			</div>
-			<div style="width=160px; float:left; margin-left:150px">
+			<div style="width=160px; float:left; margin-left:120px">
 				<label>調整標語顏色：</label>
 			</div>
 			<div style="width=100px; float:right;">
@@ -36,114 +37,121 @@
 		<a id="lnkDownload" class="gdbut" href="#">完成並下載！</a>
 		
 		<script>
-			var canvas = new fabric.Canvas('canvas');
-			canvas.setBackgroundImage('image/canvas/background.png', canvas.renderAll.bind(canvas), {
-			  originX: 'left',
-			  originY: 'top',
-		    left: 0,
-		    top: 0
-			});
+			window.addEventListener('load', function onLoad() {
+				var canvas = new fabric.Canvas('canvas');
+				canvas.setBackgroundImage('image/canvas/background.png', canvas.renderAll.bind(canvas), {
+				  originX: 'left',
+				  originY: 'top',
+			    left: 0,
+			    top: 0
+				});
 
-			fabric.Image.fromURL('image/canvas/show_image.jpeg', function(img) {
-		    img.set( { left: 500, top: 300 } );
-		    canvas.add(img);
+				fabric.Image.fromURL('image/canvas/show_image.jpeg', function(img) {
+				    img.set( { left: 500, top: 300 } );
+				    canvas.add(img);
 
-		    var imageLoader = document.getElementById('imageLoader');
-		    imageLoader.addEventListener('change', handleImage, false);
-		    function handleImage (e){
-			    var reader = new FileReader();
-			    reader.onload = function(event){
-			        var nimg = new Image();
-			        nimg.onload = function() {
-		            img.width = this.width;
-		            img.height = this.height;
-		            img.setSrc(this.src);
-			        }
-			        nimg.src = event.target.result;
+				    var imageLoader = document.getElementById('imageLoader');
+				    imageLoader.addEventListener('change', handleImage, false);
+				    function handleImage (e){
+					    var reader = new FileReader();
+					    reader.onload = function(event){
+					        var nimg = new Image();
+					        nimg.onload = function() {
+				            img.width = this.width;
+				            img.height = this.height;
+				            img.setSrc(this.src);
+					        }
+					        nimg.src = event.target.result;
+					    }
+					    reader.readAsDataURL(e.target.files[0]);     
+					}
+
+				});
+
+			  fabric.Image.fromURL('image/canvas/title_left.png', function(img) {
+			    img.set( { left: 20, top: 300 } );
+			    canvas.add(img);
+			    var logo_side = 'left';
+			    var logo_switch = document.getElementById('logo_switch');
+			    logo_switch.addEventListener('change', handleImage, false);
+			    function handleImage (e) {
+			    	if (logo_side == 'left') {
+			    		logo_side = 'right';
+			    		img.setSrc('image/canvas/title_right.png');
+			    		console.log('Change logo to right side.');
+			    	} else if (logo_side == 'right') {
+			    		logo_side = 'left';
+			    		img.setSrc('Image/canvas/title_left.png');
+			    		console.log('Change logo to left side.');
+			    	} else {
+			    		console.error('Change logo error.');
+			    	}
 			    }
-			    reader.readAsDataURL(e.target.files[0]);     
+			  });
+			  var slogan = new fabric.IText("12月10日   你是我的小心肝嗎？  ", {
+			  	left: 50,
+			  	top: 30,
+			  	fontFamily: 'BMin00h',
+			  	fill: '#fff',
+				  shadow: 'rgba(0,0,0,0.3) 5px 5px 5px',
+				  fontSize: 60,
+				  styles: {
+				  	0: {
+				  		13: { fill: '#e16ee9' },
+				  		14: { fill: '#e16ee9' },
+				  		15: { fill: '#e16ee9' }
+				  	}
+				  }
+				});
+				slogan.hasBorders = false;
+				slogan.hasControls = false;
+				slogan.hasRotatingPoint = false;
+				
+				canvas.add(slogan);
+
+				var crt = document.getElementById('crt');
+				crt.parentElement.removeChild(crt);
+
+				function addHandler(id, fn, eventName) {
+				  document.getElementById(id)[eventName] = function() {
+				    var el = this;
+				    if (obj = canvas.getActiveObject()) {
+				      fn.call(el, obj);
+				      canvas.renderAll();
+				    }
+				  };
 				}
 
-		  });
+				function setStyle(object, styleName, value) {
+				  if (object.setSelectionStyles && object.isEditing) {
+				    var style = { };
+				    style[styleName] = value;
+				    object.setSelectionStyles(style);
+				  }
+				  else {
+				    object[styleName] = value;
+				  }
+				}
 
-		  fabric.Image.fromURL('image/canvas/title_left.png', function(img) {
-		    img.set( { left: 20, top: 300 } );
-		    canvas.add(img);
-		    var logo_side = 'left';
-		    var logo_switch = document.getElementById('logo_switch');
-		    logo_switch.addEventListener('change', handleImage, false);
-		    function handleImage (e) {
-		    	if (logo_side == 'left') {
-		    		logo_side = 'right';
-		    		img.setSrc('image/canvas/title_right.png');
-		    		console.log('Change logo to right side.');
-		    	} else if (logo_side == 'right') {
-		    		logo_side = 'left';
-		    		img.setSrc('Image/canvas/title_left.png');
-		    		console.log('Change logo to left side.');
-		    	} else {
-		    		console.error('Change logo error.');
-		    	}
-		    }
-		  });
-		  var slogan = new fabric.IText("12月10日   你是我的小心肝嗎？  ", {
-		  	left: 50,
-		  	top: 30,
-		  	fontFamily: 'BMin00h',
-		  	fill: '#fff',
-			  shadow: 'rgba(0,0,0,0.3) 5px 5px 5px',
-			  fontSize: 60,
-			  styles: {
-			  	0: {
-			  		13: { fill: '#e16ee9' },
-			  		14: { fill: '#e16ee9' },
-			  		15: { fill: '#e16ee9' }
-			  	}
-			  }
+				function getStyle(object, styleName) {
+				  return (object.getSelectionStyles && object.isEditing)
+				    ? object.getSelectionStyles()[styleName]
+				    : object[styleName];
+				}
+
+				addHandler('color', function(obj) {
+					setStyle(obj, 'fill', document.getElementById('color').value);
+					console.log('jizz');
+				}, 'onchange');
+
+				var imageSaver = document.getElementById('lnkDownload');
+				imageSaver.addEventListener('click', saveImage, false);
+
+				function saveImage(e) {
+				    this.href = canvas.toDataURL('png');
+				    this.download = 'canvas.png';
+				}
 			});
-			slogan.hasBorders = false;
-			slogan.hasControls = false;
-			slogan.hasRotatingPoint = false;
-			canvas.add(slogan);
-
-			function addHandler(id, fn, eventName) {
-			  document.getElementById(id)[eventName] = function() {
-			    var el = this;
-			    if (obj = canvas.getActiveObject()) {
-			      fn.call(el, obj);
-			      canvas.renderAll();
-			    }
-			  };
-			}
-
-			function setStyle(object, styleName, value) {
-			  if (object.setSelectionStyles && object.isEditing) {
-			    var style = { };
-			    style[styleName] = value;
-			    object.setSelectionStyles(style);
-			  }
-			  else {
-			    object[styleName] = value;
-			  }
-			}
-
-			function getStyle(object, styleName) {
-			  return (object.getSelectionStyles && object.isEditing)
-			    ? object.getSelectionStyles()[styleName]
-			    : object[styleName];
-			}
-
-			addHandler('color', function(obj) {
-				setStyle(obj, 'fill', document.getElementById('color').value);
-			}, 'onchange');
-
-			var imageSaver = document.getElementById('lnkDownload');
-			imageSaver.addEventListener('click', saveImage, false);
-
-			function saveImage(e) {
-			    this.href = canvas.toDataURL('png');
-			    this.download = 'canvas.png';
-			}
 		</script>
 	</body>
 
