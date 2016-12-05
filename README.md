@@ -1,8 +1,8 @@
 # NCTUCS 09 Drama
 
 ## Feature
-- index.html
 - Profile Photo Generator
+https://fsh0524.github.io/nctucs09drama/gen.html
 
 ## Bug
 - SLOW Loading font.
